@@ -34,6 +34,7 @@
         let direction = null;
         let score = 0;
 
+        // Add keydown event for controlling snake direction
         document.addEventListener("keydown", (event) => {
             if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
             else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
@@ -41,12 +42,19 @@
             else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
         });
 
+        // Check if snake collides with its own body
         function collision(head, array) {
             return array.some(segment => head.x === segment.x && head.y === segment.y);
         }
 
+        // Draw the game elements
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw border
+            ctx.strokeStyle = "#fff"; // Border color
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // Draw snake
             snake.forEach((segment, index) => {
@@ -66,7 +74,7 @@
             else if (direction === "LEFT") head.x -= box;
             else if (direction === "RIGHT") head.x += box;
 
-            // Check collision with food
+            // Check if snake eats the food
             if (head.x === food.x && head.y === food.y) {
                 food = {
                     x: Math.floor(Math.random() * 20) * box,
@@ -77,19 +85,19 @@
                 snake.pop();
             }
 
-            // Check collision with walls or itself
+            // Check for wall collision or self collision
             if (
-                head.x < 0 ||
-                head.y < 0 ||
-                head.x >= canvas.width ||
-                head.y >= canvas.height ||
+                head.x < 0 || // Left wall
+                head.y < 0 || // Top wall
+                head.x >= canvas.width || // Right wall
+                head.y >= canvas.height || // Bottom wall
                 collision(head, snake)
             ) {
                 clearInterval(game);
                 alert(`Game Over! Your score: ${score}`);
             }
 
-            snake.unshift(head);
+            snake.unshift(head); // Add new head to snake array
         }
 
         const game = setInterval(draw, 100);
